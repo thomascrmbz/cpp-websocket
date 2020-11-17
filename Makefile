@@ -3,7 +3,7 @@ HTTP_LIB=../cpp-http-server
 
 all: mkdir library
 
-library: http bin/websocket.o
+library: mkdir http bin/websocket.o
 	ar -r bin/libWebSocket.a bin/websocket.o
 
 http:
