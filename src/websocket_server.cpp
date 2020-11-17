@@ -1,8 +1,6 @@
+#include "websocket_server.h"
+
 #include <iostream>
-
-#include <http.h>
-
-#include "websocket.h"
 
 using namespace WebSocket;
 

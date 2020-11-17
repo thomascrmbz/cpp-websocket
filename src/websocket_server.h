@@ -1,5 +1,7 @@
 #pragma once
 
+#include <http.h>
+
 namespace WebSocket {
   class Server {
 
