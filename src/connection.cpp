@@ -19,18 +19,28 @@ void Connection::listen() {
   uint8_t buffer[] = { 0x81, 0x0C, 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!' };
 
   int error_code = 0;
+
   while (!error_code) {
     socklen_t error_code_size = sizeof(error_code);
     getsockopt(socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
-    if (!error_code) write(buffer, sizeof(buffer));
-    std::this_thread::sleep_for((std::chrono::seconds) 2);
+    if (!error_code) {
+      std::string message = read();
+      if (message.length() > 0) std::cout << message << std::endl;
+      write(buffer, sizeof(buffer));
+    }
   }
   std::cout << "client disconnected" << std::endl;
 }
 
 std::string Connection::read(void) const {
-  std::this_thread::sleep_for((std::chrono::seconds) 2);
-  return "default message";
+  uint8_t min_header[2];
+  ::read(this->socket, min_header, sizeof(min_header));
+  if (min_header[0] != 0x00 && min_header[1] != 0x00) {
+    Frame frame = Frame(min_header, this->socket);
+    std::cout << frame.to_string() << std::endl;
+    return frame.get_payload();
+  }
+  return "";
 }
 
 void Connection::write(uint8_t * buffer, int size) const {

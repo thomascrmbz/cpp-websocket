@@ -1,22 +1,39 @@
 #include "frame.h"
 
+#include <unistd.h>
+#include <sstream>
+
 using namespace WebSocket;
 
-uint32_t Frame::reverse_bits(uint32_t n) {
-  uint32_t ans = 0;
-  for(int i = 31; i >= 0; i--){
-      ans |= (n & 1) <<i;
-      n>>=1;
-  }
-  return ans;
+Frame::Frame(uint8_t buffer[2], int socket) {
+  int size = 2;
+
+  this->fin = (buffer[0] & 0x80) == 0x80;
+  this->opcode = buffer[0] & 0x0F;
+  this->payload_lenght = buffer[1] & 0x7F;
+
+  uint8_t result[size + payload_lenght];
+  bzero(result, size + payload_lenght);
+  for (int i = 0; i < size; i++) result[i] = buffer[i];
+
+  uint8_t payload[payload_lenght];
+  read(socket, payload, sizeof(payload));
+  for (int i = 0; i < sizeof(payload); i++) result[size+i] = payload[i];
+
+  this->data = result;
+
+  std::stringstream ss1;
+  std::stringstream ss2;
+  for (int i = 0; i < this->payload_lenght + 2; i++) ss1 << "0x" << std::hex << (int) this->data[i] << std::dec << " ";
+  for (int i = 0; i < this->payload_lenght; i++) ss2 << this->data[i+2];
+  this->frame_string = ss1.str();
+  this->payload_string = ss2.str();
 }
 
-Frame::Frame(uint32_t buffer[1024]) {
-  std::cout << "buffer: " << std::hex << buffer << std::dec << std::endl;
+std::string Frame::to_string(void) const {
+  return this->frame_string;
+}
 
-  uint32_t bits = reverse_bits(std::bitset<32> (buffer[0]).to_ulong());
-  fin = bits >> 31;
-
-  std::cout << "FIN: " << fin << std::endl;
-
+std::string Frame::get_payload(void) const {
+  return this->payload_string;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 namespace WebSocket {
 
@@ -11,6 +12,8 @@ namespace WebSocket {
 
     public:
       void listen();
+
+    private:
       std::string read(void) const;
       void write(uint8_t * buffer, int size) const;
 
