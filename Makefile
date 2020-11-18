@@ -3,11 +3,11 @@ HTTP_LIB=../cpp-http-server
 
 all: mkdir library_server library_client
 
-library_client: mkdir http libs bin/websocket_client.o bin/frame.o
-	ar -r bin/libWebSocketClient.a bin/websocket_client.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o
+library_client: mkdir http libs bin/websocket_client.o bin/frame.o bin/connection.o
+	ar -r bin/libWebSocketClient.a bin/websocket_client.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o bin/connection.o
 
-library_server: mkdir http libs bin/websocket_server.o bin/frame.o
-	ar -r bin/libWebSocketServer.a bin/websocket_server.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o
+library_server: mkdir http libs bin/websocket_server.o bin/frame.o bin/connection.o
+	ar -r bin/libWebSocketServer.a bin/websocket_server.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o bin/connection.o
 
 http:
 	(cd $(HTTP_LIB); make library)
@@ -24,6 +24,9 @@ bin/websocket_client.o: src/websocket_client.cpp src/websocket_client.h
 
 bin/frame.o: src/frame.cpp src/frame.h
 	g++ --std=c++11 -c src/frame.cpp -o bin/frame.o
+
+bin/connection.o: src/connection.cpp src/connection.h
+	g++ --std=c++11 -c src/connection.cpp -o bin/connection.o
 
 libs:
 	g++ --std=c++11 -c src/lib/base64.cpp -o bin/lib/base64.o

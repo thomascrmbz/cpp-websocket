@@ -10,6 +10,7 @@
 #include "frame.h"
 #include "lib/base64.h"
 #include "lib/sha1.h"
+#include "connection.h"
 
 using namespace WebSocket;
 
@@ -41,44 +42,9 @@ void Server::listen(int port) const {
     res.set_content("");
     res.send();
 
-    std::thread th(&Server::listen_socket, res._get_socket());
+    std::thread th(&Connection::listen, Connection(res._get_socket()));
     th.detach();
   };
 
   server.listen(port);
-}
-
-void Server::listen_socket(int socket) {
-  std::cout << "listening on socket " << socket << " in thread " << std::this_thread::get_id() << std::endl;
-
-  int error_code = 0;
-  bool disconnected = false;
-  int looped = 0;
-
-  while (!error_code && !disconnected) {
-    uint32_t buffer[1024];
-    bzero(buffer, 1024);
-
-    std::cout << "buffer reading on socket " << socket << " in thread " << std::this_thread::get_id() << std::endl;
-    read(socket, buffer, 1024); // @todo buffer is not clearing after first loop??
-    Frame frame = Frame(buffer);
-
-    // @todo fix error: A server must not mask any frames that it sends to the client.
-    if (looped == 0) {  // (reply frame is response frame after first loop???)
-      uint32_t reply[1024] = { 0x65480581, 0x006f6c6c }; // frame with content "Hello"
-      Frame f = Frame(reply);
-      write(socket, reply, sizeof(reply));
-      std::cout << "frame send back on socket " << socket << " in thread " << std::this_thread::get_id() << std::endl;
-    }
-
-    socklen_t error_code_size = sizeof(error_code);
-    getsockopt(socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
-
-    std::cout << "done with request on socket " << socket << " in thread " << std::this_thread::get_id() << std::endl;
-    looped++;
-    bzero(buffer, 1024); // not working?
-  }
-
-  std::cout << "socket " << socket << " closed in thread " << std::this_thread::get_id() << std::endl;
-  close(socket);
 }
