@@ -44,6 +44,11 @@ std::string Connection::read(void) const {
 }
 
 void Connection::write(uint8_t * buffer, int size) const {
-  ::write(socket, buffer, size);
-  std::cout << "sending frame to socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
+  int error_code = 0;
+  socklen_t error_code_size = sizeof(error_code);
+  getsockopt(socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
+  if (error_code == 0) {
+    ::write(socket, buffer, size);
+    std::cout << "sending frame to socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
+  }
 }
