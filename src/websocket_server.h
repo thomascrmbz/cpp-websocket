@@ -11,5 +11,8 @@ namespace WebSocket {
     public:
       void listen(int port) const;
 
+    private:
+      static void listen_socket(int socket);
+
   };
 }

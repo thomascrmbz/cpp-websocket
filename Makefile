@@ -3,23 +3,31 @@ HTTP_LIB=../cpp-http-server
 
 all: mkdir library_server library_client
 
-library_client: mkdir http bin/websocket_client.o
-	ar -r bin/libWebSocketClient.a bin/websocket_client.o
+library_client: mkdir http libs bin/websocket_client.o bin/frame.o
+	ar -r bin/libWebSocketClient.a bin/websocket_client.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o
 
-library_server: mkdir http bin/websocket_server.o
-	ar -r bin/libWebSocketServer.a bin/websocket_server.o
+library_server: mkdir http libs bin/websocket_server.o bin/frame.o
+	ar -r bin/libWebSocketServer.a bin/websocket_server.o bin/lib/base64.o bin/lib/sha1.o bin/frame.o
 
 http:
 	(cd $(HTTP_LIB); make library)
 
 mkdir:
 	mkdir -p bin
+	mkdir -p bin/lib
 
 bin/websocket_server.o: src/websocket_server.cpp src/websocket_server.h
 	g++ --std=c++11 -c src/websocket_server.cpp -I$(HTTP_LIB)/src -o bin/websocket_server.o
 
 bin/websocket_client.o: src/websocket_client.cpp src/websocket_client.h
 	g++ --std=c++11 -c src/websocket_client.cpp -I$(HTTP_LIB)/src -o bin/websocket_client.o
+
+bin/frame.o: src/frame.cpp src/frame.h
+	g++ --std=c++11 -c src/frame.cpp -o bin/frame.o
+
+libs:
+	g++ --std=c++11 -c src/lib/base64.cpp -o bin/lib/base64.o
+	g++ --std=c++11 -c src/lib/sha1.cpp -o bin/lib/sha1.o
 
 example: example_server #example_client
 
@@ -32,4 +40,4 @@ example_server: all
 	g++ --std=c++11 bin/example_server.o -L./bin -lWebSocketServer -L$(HTTP_LIB)/bin -lHTTP -o example_server.out
 
 clean:
-	rm -f bin/*
+	rm -rf bin/*
