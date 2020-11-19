@@ -18,6 +18,10 @@ Server::Server(void) {
 
 }
 
+void Server::set_debug(bool value) {
+  this->debug = value;
+}
+
 std::vector<uint8_t> string_to_bytes(std::string s) {
   std::vector<uint8_t> result;
   for (int i = 0; i < s.size(); i+=2) result.push_back(std::stoi(s.substr(i, 2), 0, 16));
@@ -25,13 +29,11 @@ std::vector<uint8_t> string_to_bytes(std::string s) {
 }
 
 void Server::listen(int port) {
-  std::cout << "listening on port " << port << " in thread " << std::this_thread::get_id() << std::endl;
+  if (this->debug) std::cout << "listening on port " << port << " in thread " << std::this_thread::get_id() << std::endl;
 
   HTTP::Server server;
 
   server.handle = [&](HTTP::Request req, HTTP::Response res) {
-    std::cout << "new connection incomming..." << std::endl;
-
     res.set_status("101 Switching Protocols");
     std::vector<HTTP::Header> headers = {
       HTTP::Header("Connection", "Upgrade"),
@@ -42,7 +44,10 @@ void Server::listen(int port) {
     res.set_content("");
     res.send();
 
-    std::thread th(&Connection::listen, Connection(res._get_socket(), this->on_connection));
+    Connection connection(res._get_socket(), this->on_connection);
+    connection.set_debug(this->debug);
+
+    std::thread th(&Connection::listen, connection);
     th.detach();
   };
 

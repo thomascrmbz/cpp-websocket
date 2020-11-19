@@ -14,11 +14,15 @@ Connection::Connection(int socket, std::function<void(WebSocket::Connection *)> 
   this->on_connection = callback;
 }
 
+void Connection::set_debug(bool value) {
+  this->debug = value;
+}
+
 void Connection::listen() {
-  std::cout << "listening on socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
+  std::cout << "\033[32mclient connected\033[0m" << std::endl;
   this->on_connection(this);
   this->listen_for_message();
-  std::cout << "client disconnected" << std::endl;
+  std::cout << "\033[91mclient disconnected\033[0m" << std::endl;
 }
 
 void Connection::listen_for_message(void) {
@@ -32,7 +36,7 @@ void Connection::listen_for_message(void) {
       ::read(this->socket, min_header, sizeof(min_header));
       if (min_header[0] != 0x00 && min_header[1] != 0x00) {
         Frame frame = Frame(min_header, this->socket);
-        std::cout << frame.to_string() << std::endl;
+        if (this->debug) std::cout << "received: \033[93m" << frame.to_string() << "\033[0m" << std::endl;
         this->on_message(frame.get_payload());
       } else break;
     }
@@ -45,6 +49,5 @@ void Connection::write(uint8_t * buffer, int size) const {
   getsockopt(socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
   if (error_code == 0) {
     ::write(socket, buffer, size);
-    std::cout << "sending frame to socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
   }
 }

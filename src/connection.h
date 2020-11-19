@@ -11,6 +11,9 @@ namespace WebSocket {
       Connection(int socket, std::function<void(WebSocket::Connection *)> callback);
 
     public:
+      void set_debug(bool value);
+
+    public:
       void listen();
       void write(uint8_t * buffer, int size) const;
 
@@ -22,6 +25,7 @@ namespace WebSocket {
 
     private:
       int socket;
+      bool debug;
       std::function<void(WebSocket::Connection *)> on_connection;
 
   };
