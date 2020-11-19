@@ -24,7 +24,7 @@ std::vector<uint8_t> string_to_bytes(std::string s) {
   return result;
 }
 
-void Server::listen(int port) const {
+void Server::listen(int port) {
   std::cout << "listening on port " << port << " in thread " << std::this_thread::get_id() << std::endl;
 
   HTTP::Server server;

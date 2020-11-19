@@ -13,11 +13,11 @@ Connection::Connection(int socket) {
   this->socket = socket;
 }
 
-void Connection::set_on_connection_callback(std::function<void(const WebSocket::Connection *)> callback) {
+void Connection::set_on_connection_callback(std::function<void(WebSocket::Connection *)> callback) {
   this->on_connection_callback = callback;
 }
 
-void Connection::set_on_message_callback(std::function<void(std::string, const WebSocket::Connection *)> callback) {
+void Connection::set_on_message_callback(std::function<void(std::string, WebSocket::Connection *)> callback) {
   this->on_message_callback = callback;
 }
 
@@ -28,7 +28,7 @@ void Connection::listen() {
   std::cout << "client disconnected" << std::endl;
 }
 
-void Connection::listen_for_message(void) const {
+void Connection::listen_for_message(void) {
   int error_code = 0;
   while (error_code == 0) {
     socklen_t error_code_size = sizeof(error_code);

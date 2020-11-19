@@ -12,11 +12,11 @@ namespace WebSocket {
       Server(void);
 
     public:
-      void listen(int port) const;
+      void listen(int port);
 
     public:
-      std::function<void(const WebSocket::Connection *)> on_connection = [](const WebSocket::Connection * connection) {};
-      std::function<void(std::string, const WebSocket::Connection *)> on_message = [](std::string message, const WebSocket::Connection * connection) {};
+      std::function<void(WebSocket::Connection *)> on_connection = [](WebSocket::Connection * connection) {};
+      std::function<void(std::string, WebSocket::Connection *)> on_message = [](std::string message, WebSocket::Connection * connection) {};
       // std::function<void()> on_close = []() {};
 
   };
