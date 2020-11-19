@@ -2,24 +2,25 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 namespace WebSocket {
   class Frame {
 
     public:
-      Frame(uint8_t min_header[2], int socket);
+      Frame(uint8_t data[], int size);
 
     public:
       std::string to_string(void) const;
       std::string get_payload(void) const;
+      bool is_empty(void) const;
 
     private:
       bool fin;
       int opcode;
-      int payload_lenght;
-      uint8_t * data;
-      std::string frame_string;
-      std::string payload_string;
+      int payload_size;
+      int header_size;
+      std::vector<uint8_t> data;
 
   };
 }

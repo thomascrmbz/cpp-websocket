@@ -3,6 +3,8 @@
 #include <string>
 #include <functional>
 
+#include "frame.h"
+
 namespace WebSocket {
 
   class Connection {
@@ -22,6 +24,7 @@ namespace WebSocket {
 
     private:
       void listen_for_message(void);
+      WebSocket::Frame read_frame();
 
     private:
       int socket;

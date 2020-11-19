@@ -5,8 +5,6 @@
 #include <unistd.h>
 #include <sys/socket.h>
 
-#include "frame.h"
-
 using namespace WebSocket;
 
 Connection::Connection(int socket, std::function<void(WebSocket::Connection *)> callback) {
@@ -30,17 +28,30 @@ void Connection::listen_for_message(void) {
   while (error_code == 0) {
     socklen_t error_code_size = sizeof(error_code);
     getsockopt(this->socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
-    if (error_code == 0) {
-      uint8_t min_header[2];
-      bzero(min_header, 2);
-      ::read(this->socket, min_header, sizeof(min_header));
-      if (min_header[0] != 0x00 && min_header[1] != 0x00) {
-        Frame frame = Frame(min_header, this->socket);
-        if (this->debug) std::cout << "received: \033[93m" << frame.to_string() << "\033[0m" << std::endl;
+
+    if (error_code) break;
+
+    try {
+        Frame frame = read_frame();
+        if (this->debug) std::cout << "\033[93m" << frame.to_string() << "\033[0m" << std::endl;
         this->on_message(frame.get_payload());
-      } else break;
+    } catch (const char * error) {
+      break;
     }
   }
+}
+
+Frame Connection::read_frame() {
+  int size = 192; // @todo calculate this number for better performance
+  uint8_t result[size];
+  bzero(result, sizeof(result));
+
+  read(socket, result, sizeof(result));
+
+  Frame frame = Frame(result, sizeof(result));
+  if (frame.is_empty()) throw "empty_frame";
+  
+  return frame;
 }
 
 void Connection::write(uint8_t * buffer, int size) const {
