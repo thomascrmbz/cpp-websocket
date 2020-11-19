@@ -15,9 +15,9 @@ namespace WebSocket {
       void listen(int port) const;
 
     public:
-      std::function<void()> on_open = []() {};
-      std::function<void(std::string, const WebSocket::Connection * connection)> on_message = [](std::string message, const WebSocket::Connection * connection) {};
-      std::function<void()> on_close = []() {};
+      std::function<void(const WebSocket::Connection *)> on_connection = [](const WebSocket::Connection * connection) {};
+      std::function<void(std::string, const WebSocket::Connection *)> on_message = [](std::string message, const WebSocket::Connection * connection) {};
+      // std::function<void()> on_close = []() {};
 
   };
 }

@@ -13,12 +13,17 @@ Connection::Connection(int socket) {
   this->socket = socket;
 }
 
+void Connection::set_on_connection_callback(std::function<void(const WebSocket::Connection *)> callback) {
+  this->on_connection_callback = callback;
+}
+
 void Connection::set_on_message_callback(std::function<void(std::string, const WebSocket::Connection *)> callback) {
   this->on_message_callback = callback;
 }
 
 void Connection::listen() {
   std::cout << "listening on socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
+  this->on_connection_callback(this);
   this->listen_for_message();
   std::cout << "client disconnected" << std::endl;
 }

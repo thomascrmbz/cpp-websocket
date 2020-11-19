@@ -15,6 +15,7 @@ namespace WebSocket {
       void write(uint8_t * buffer, int size) const;
 
     public:
+      void set_on_connection_callback(std::function<void(const WebSocket::Connection *)> callback);
       void set_on_message_callback(std::function<void(std::string, const WebSocket::Connection *)> callback);
 
     private:
@@ -22,6 +23,7 @@ namespace WebSocket {
 
     private:
       int socket;
+      std::function<void(const WebSocket::Connection *)> on_connection_callback;
       std::function<void(std::string, const WebSocket::Connection *)> on_message_callback;
 
   };
