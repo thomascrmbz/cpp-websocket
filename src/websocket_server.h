@@ -3,6 +3,7 @@
 #include <string>
 
 #include <http.h>
+#include "connection.h"
 
 namespace WebSocket {
   class Server {
@@ -15,7 +16,7 @@ namespace WebSocket {
 
     public:
       std::function<void()> on_open = []() {};
-      std::function<void(std::string)> on_message = [](std::string message) {};
+      std::function<void(std::string, const WebSocket::Connection * connection)> on_message = [](std::string message, const WebSocket::Connection * connection) {};
       std::function<void()> on_close = []() {};
 
   };

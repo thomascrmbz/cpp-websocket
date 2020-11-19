@@ -9,29 +9,13 @@
 
 using namespace WebSocket;
 
-Connection::Connection(const Server * server, int socket) {
+Connection::Connection(int socket, std::function<void(std::string, const WebSocket::Connection *)> on_message) {
   this->socket = socket;
-  this->server = server;
+  this->on_message = on_message;
 }
 
 void Connection::listen() {
   std::cout << "listening on socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
-
-  // uint8_t buffer[] = { 0x81, 0x0C, 'H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd', '!' };
-
-  // int error_code = 0;
-
-  // while (!error_code) {
-  //   socklen_t error_code_size = sizeof(error_code);
-  //   getsockopt(socket, SOL_SOCKET, SO_ERROR, &error_code, &error_code_size);
-  //   if (!error_code) {
-  //     std::string message = read();
-  //     if (message.length() > 0) std::cout << message << std::endl;
-  //     write(buffer, sizeof(buffer));
-  //   }
-  // }
-  // std::cout << "client disconnected" << std::endl;
-
   this->listen_for_message();
   std::cout << "client disconnected" << std::endl;
 }
@@ -48,7 +32,7 @@ void Connection::listen_for_message(void) const {
       if (min_header[0] != 0x00 && min_header[1] != 0x00) {
         Frame frame = Frame(min_header, this->socket);
         std::cout << frame.to_string() << std::endl;
-        this->server->on_message(frame.get_payload());
+        this->on_message(frame.get_payload(), this);
       } else break;
     }
   }
