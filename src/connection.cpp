@@ -42,7 +42,7 @@ void Connection::listen_for_message(void) {
 }
 
 Frame Connection::read_frame() {
-  int size = 192; // @todo calculate this number for better performance
+  int size = 512; // @todo calculate this number for better performance and bigger frames
   uint8_t result[size];
   bzero(result, sizeof(result));
 
