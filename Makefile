@@ -26,7 +26,7 @@ bin/frame.o: src/frame.cpp src/frame.h
 	g++ --std=c++11 -c src/frame.cpp -o bin/frame.o
 
 bin/connection.o: src/connection.cpp src/connection.h
-	g++ --std=c++11 -c src/connection.cpp -o bin/connection.o
+	g++ --std=c++11 -c src/connection.cpp -I$(HTTP_LIB)/src -o bin/connection.o
 
 libs:
 	g++ --std=c++11 -c src/lib/base64.cpp -o bin/lib/base64.o

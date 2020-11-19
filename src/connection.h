@@ -3,22 +3,25 @@
 #include <string>
 #include <functional>
 
+#include "websocket_server.h"
+
 namespace WebSocket {
 
   class Connection {
 
     public:
-      Connection(int socket);
+      Connection(const WebSocket::Server * server, int socket);
 
     public:
       void listen();
 
     private:
-      std::string read(void) const;
+      void listen_for_message(void) const;
       void write(uint8_t * buffer, int size) const;
 
     private:
       int socket;
+      const WebSocket::Server * server;
 
   };
 }

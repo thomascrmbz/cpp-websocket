@@ -29,7 +29,7 @@ void Server::listen(int port) const {
 
   HTTP::Server server;
 
-  server.handle = [](HTTP::Request req, HTTP::Response res) {
+  server.handle = [&](HTTP::Request req, HTTP::Response res) {
     std::cout << "new connection incomming..." << std::endl;
 
     res.set_status("101 Switching Protocols");
@@ -42,7 +42,7 @@ void Server::listen(int port) const {
     res.set_content("");
     res.send();
 
-    std::thread th(&Connection::listen, Connection(res._get_socket()));
+    std::thread th(&Connection::listen, Connection(this, res._get_socket()));
     th.detach();
   };
 
