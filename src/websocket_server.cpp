@@ -42,11 +42,7 @@ void Server::listen(int port) {
     res.set_content("");
     res.send();
 
-    Connection connection(res._get_socket());
-    connection.set_on_connection_callback(this->on_connection);
-    connection.set_on_message_callback(this->on_message);
-
-    std::thread th(&Connection::listen, connection);
+    std::thread th(&Connection::listen, Connection(res._get_socket(), this->on_connection));
     th.detach();
   };
 

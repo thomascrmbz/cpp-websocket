@@ -9,21 +9,14 @@
 
 using namespace WebSocket;
 
-Connection::Connection(int socket) {
+Connection::Connection(int socket, std::function<void(WebSocket::Connection *)> callback) {
   this->socket = socket;
-}
-
-void Connection::set_on_connection_callback(std::function<void(WebSocket::Connection *)> callback) {
-  this->on_connection_callback = callback;
-}
-
-void Connection::set_on_message_callback(std::function<void(std::string, WebSocket::Connection *)> callback) {
-  this->on_message_callback = callback;
+  this->on_connection = callback;
 }
 
 void Connection::listen() {
   std::cout << "listening on socket " << this->socket << " in thread " << std::this_thread::get_id() << std::endl;
-  this->on_connection_callback(this);
+  this->on_connection(this);
   this->listen_for_message();
   std::cout << "client disconnected" << std::endl;
 }
@@ -40,7 +33,7 @@ void Connection::listen_for_message(void) {
       if (min_header[0] != 0x00 && min_header[1] != 0x00) {
         Frame frame = Frame(min_header, this->socket);
         std::cout << frame.to_string() << std::endl;
-        this->on_message_callback(frame.get_payload(), this);
+        this->on_message(frame.get_payload());
       } else break;
     }
   }
