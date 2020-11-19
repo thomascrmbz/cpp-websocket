@@ -9,9 +9,12 @@
 
 using namespace WebSocket;
 
-Connection::Connection(int socket, std::function<void(std::string, const WebSocket::Connection *)> on_message) {
+Connection::Connection(int socket) {
   this->socket = socket;
-  this->on_message = on_message;
+}
+
+void Connection::set_on_message_callback(std::function<void(std::string, const WebSocket::Connection *)> callback) {
+  this->on_message_callback = callback;
 }
 
 void Connection::listen() {
@@ -32,7 +35,7 @@ void Connection::listen_for_message(void) const {
       if (min_header[0] != 0x00 && min_header[1] != 0x00) {
         Frame frame = Frame(min_header, this->socket);
         std::cout << frame.to_string() << std::endl;
-        this->on_message(frame.get_payload(), this);
+        this->on_message_callback(frame.get_payload(), this);
       } else break;
     }
   }
