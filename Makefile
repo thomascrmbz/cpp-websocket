@@ -22,6 +22,9 @@ bin/websocket_server.o: src/websocket_server.cpp src/websocket_server.h
 bin/websocket_client.o: src/websocket_client.cpp src/websocket_client.h
 	g++ --std=c++11 -c src/websocket_client.cpp -I$(HTTP_LIB)/src -o bin/websocket_client.o
 
+bin/websocket_client.o: src/websocket_client.cpp src/websocket_client.h
+	g++ --std=c++11 -c src/websocket_client.cpp -I$(HTTP_LIB)/src -o bin/websocket_client.o
+
 bin/frame.o: src/frame.cpp src/frame.h
 	g++ --std=c++11 -c src/frame.cpp -o bin/frame.o
 
@@ -32,11 +35,11 @@ libs:
 	g++ --std=c++11 -c src/lib/base64.cpp -o bin/lib/base64.o
 	g++ --std=c++11 -c src/lib/sha1.cpp -o bin/lib/sha1.o
 
-example: example_server #example_client
+example: example_server example_client
 
-# example_client: all
-# 	g++ -c --std=c++11 example_client.cpp -I./src -I$(HTTP_LIB)/src -o bin/example_client.o
-# 	g++ --std=c++11 bin/example_client.o -L./bin -lWebSocket -L$(HTTP_LIB)/bin -lHTTP -o example_client.out
+example_client: all
+	g++ -c --std=c++11 example_client.cpp -I./src -I$(HTTP_LIB)/src -o bin/example_client.o
+	g++ --std=c++11 bin/example_client.o -L./bin -lWebSocketClient -L$(HTTP_LIB)/bin -lHTTP -o example_client.out
 
 example_server: all
 	g++ -c --std=c++11 example_server.cpp -I./src -I$(HTTP_LIB)/src -o bin/example_server.o
