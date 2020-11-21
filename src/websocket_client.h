@@ -15,7 +15,6 @@ namespace WebSocket {
 
     public:
       std::function<void(WebSocket::Connection *)> on_connection = [](WebSocket::Connection * connection) {};
-      std::function<void(std::string)> on_message = [](std::string message) {};
 
     public:
       void connect(void);
