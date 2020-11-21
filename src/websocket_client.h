@@ -4,6 +4,8 @@
 
 #include <string>
 #include <functional>
+#include <netinet/in.h>
+#include "connection.h"
 
 namespace WebSocket {
   class Client {
@@ -12,11 +14,17 @@ namespace WebSocket {
       Client(std::string url);
 
     public:
-      std::function<void()> on_open = []() {};
-      std::function<void(std::string)> message = [](std::string message) {};
+      std::function<void(WebSocket::Connection *)> on_connection = [](WebSocket::Connection * connection) {};
+      std::function<void(std::string)> on_message = [](std::string message) {};
 
     public:
       void connect(void);
 
+    private:
+      void listen_for_message(void);
+
+    private:
+      int socket;
+      struct sockaddr_in address;
   };
 }
