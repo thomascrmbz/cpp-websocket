@@ -14,10 +14,11 @@ namespace WebSocket {
 
     public:
       void set_debug(bool value);
+      bool is_connected();
 
     public:
       void listen();
-      void write(uint8_t * buffer, int size) const;
+      void write(uint8_t * buffer, int size);
 
     public:
       std::function<void(std::string)> on_message = [](std::string message) {};
@@ -30,6 +31,7 @@ namespace WebSocket {
       int socket;
       bool debug;
       std::function<void(WebSocket::Connection *)> on_connection;
+      bool _is_connected = true;
 
   };
 }
