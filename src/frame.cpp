@@ -53,7 +53,7 @@ void Frame::create_frame(std::vector<uint8_t> data) {
     // 7+64 bit
     this->header_size = 8;
 
-    std::cout << "\e[91payload over 8388607 bits are not yet supported!\e[0m" << std::endl;
+    std::cout << "\e[91payload over 65535 bytes are not yet supported!\e[0m" << std::endl;
     this->payload_size = 0;
   } else if (this->data[1] == 0x7E) {
     // 7+16 bit
