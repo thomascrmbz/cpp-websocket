@@ -18,6 +18,7 @@ namespace WebSocket {
 
     public:
       void listen();
+      void write(std::string message);
       void write(uint8_t * buffer, int size);
 
     public:

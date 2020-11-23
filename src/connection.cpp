@@ -58,6 +58,11 @@ Frame Connection::read_frame() {
   return frame;
 }
 
+void Connection::write(std::string message) {
+  Frame frame(message);
+  write(&frame.get_data()[0], frame.get_data().size());
+}
+
 void Connection::write(uint8_t * buffer, int size) {
   if (this->is_connected()) ::write(socket, buffer, size);
 }
