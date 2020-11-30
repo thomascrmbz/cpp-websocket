@@ -23,6 +23,7 @@ namespace WebSocket {
 
     public:
       std::function<void(std::string)> on_message = [](std::string message) {};
+      std::function<void()> on_close = []() {};
 
     private:
       void listen_for_message(void);

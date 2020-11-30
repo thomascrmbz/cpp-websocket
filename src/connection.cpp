@@ -26,11 +26,12 @@ bool Connection::is_connected() {
 }
 
 void Connection::listen() {
-  std::cout << "\033[32mclient connected\033[0m" << std::endl;
+  if (this->debug) std::cout << "\033[32mconnection opened\033[0m" << std::endl;
   this->on_connection(this);
   this->listen_for_message();
   this->_is_connected = false;
-  std::cout << "\033[91mclient disconnected\033[0m" << std::endl;
+  this->on_close();
+  if (this->debug) std::cout << "\033[91mconnection closed\033[0m" << std::endl;
 }
 
 void Connection::listen_for_message(void) {
@@ -40,6 +41,7 @@ void Connection::listen_for_message(void) {
       if (this->debug) std::cout << "\033[93m" << frame.to_string() << "\033[0m" << std::endl;
       this->on_message(frame.get_payload());
     } catch (const char * error) {
+      std::cout << "\e[91m" << error << "\e[0m" << std::endl;
       break;
     }
   }
