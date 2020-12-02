@@ -93,3 +93,13 @@ int Frame::get_payload_size(void) const {
 std::vector<uint8_t> Frame::get_data(void) const {
   return this->data;
 }
+
+int Frame::get_opcode(void) const {
+  return this->opcode;
+}
+
+void Frame::set_opcode(int code) {
+  int x = code & 0xF;
+  this->opcode = code;
+  this->data[0] = (this->data[0] & 0xF0) | x;
+}

@@ -18,6 +18,11 @@ namespace WebSocket {
       int get_payload_size(void) const;
       std::vector<uint8_t> get_data(void) const;
 
+      int get_opcode(void) const;
+
+    public:
+      void set_opcode(int code);
+
     public:
       std::string to_string(void) const;
       bool is_empty(void) const;
