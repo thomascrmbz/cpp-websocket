@@ -22,7 +22,7 @@ namespace WebSocket {
       void write(uint8_t * buffer, int size);
 
     public:
-      std::function<void(std::string)> on_message = [](std::string message) {};
+      std::function<void(WebSocket::Frame)> on_message = [](WebSocket::Frame frame) {};
       std::function<void()> on_close = []() {};
 
     private:

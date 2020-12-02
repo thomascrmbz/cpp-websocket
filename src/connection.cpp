@@ -39,7 +39,7 @@ void Connection::listen_for_message(void) {
     try {
       Frame frame = read_frame();
       if (this->debug) std::cout << "\033[93m" << frame.to_string() << "\033[0m" << std::endl;
-      this->on_message(frame.get_payload());
+      this->on_message(frame);
     } catch (const char * error) {
       std::cout << "\e[91m" << error << "\e[0m" << std::endl;
       break;
