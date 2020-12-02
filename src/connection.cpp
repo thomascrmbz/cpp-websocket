@@ -68,3 +68,7 @@ void Connection::write(std::string message) {
 void Connection::write(uint8_t * buffer, int size) {
   if (this->is_connected()) ::write(socket, buffer, size);
 }
+
+void Connection::write(WebSocket::Frame frame) {
+  write(&frame.get_data()[0], frame.get_data().size());
+}
